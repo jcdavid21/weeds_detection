@@ -163,3 +163,48 @@ body {
     border: 2px solid #dc3545;
     border-radius: 50%;
 }
+
+/* Video Detection Styles */
+/* Video Detection Page Styles */
+.video-container {
+    position: relative;
+    min-height: 300px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: #f8f9fa;
+    margin-bottom: 20px;
+}
+
+.stats-box {
+    transition: all 0.3s ease;
+}
+
+.stats-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stats-box h3 {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.controls {
+    margin-top: 10px;
+}
+
+#videoSeek {
+    height: 10px;
+    cursor: pointer;
+}
+
+#detectionLog {
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+}
