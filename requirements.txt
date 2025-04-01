@@ -1,0 +1,8 @@
+Flask
+Flask-CORS
+numpy
+torch
+opencv-python
+Pillow
+werkzeug
+ultralytics
