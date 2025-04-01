@@ -1,0 +1,165 @@
+:root {
+    --primary-color: #28a745;
+    --secondary-color: #218838;
+    --background-color: #f8f9fa;
+    --card-color: #ffffff;
+    --text-color: #212529;
+    --border-color: #dee2e6;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 5rem 0;
+    margin-bottom: 3rem;
+}
+
+.dropzone {
+    border: 2px dashed var(--primary-color);
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background-color: rgba(40, 167, 69, 0.05);
+}
+
+.dropzone:hover {
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+.image-placeholder {
+    width: 100%;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.result-card {
+    transition: transform 0.3s;
+    height: 100%;
+}
+
+.result-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,.1);
+}
+
+.confidence.high {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+
+.confidence.medium {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.confidence.low {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.error-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #dc3545;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    animation: slideIn 0.3s, fadeOut 0.5s 2.5s forwards;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    color: #999;
+}
+
+.no-results.error {
+    color: #dc3545;
+}
+
+
+/* Add to your style.css */
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    height: 100%;
+}
+
+.stat-card i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.stat-card h4 {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.stat-card p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.progress {
+    border-radius: 20px;
+    overflow: visible;
+}
+
+.progress-bar {
+    border-radius: 20px;
+    position: relative;
+    overflow: visible;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: -4px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border: 2px solid #dc3545;
+    border-radius: 50%;
+}
