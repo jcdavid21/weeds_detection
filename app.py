@@ -19,16 +19,13 @@ import json
 app = Flask(__name__)
 
 
-# Allow specific origin (more secure)
-CORS(app)  # This allows all origins
+CORS(app)  
 
 UPLOAD_FOLDER = 'static/uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'mp4', 'avi', 'mov'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'mp4', 'avif', 'mov'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB limit
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  
 
-# Load the trained model - update path to your model
-# Using YOLOv5 instead of Ultralytics YOLO
 model = torch.hub.load('ultralytics/yolov5', 'custom', path='best.pt')
 model.conf = 0.25  # Confidence threshold
 model.classes = [0, 1]  # Both classes (0: Weed, 1: Paddy)
