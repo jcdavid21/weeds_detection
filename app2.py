@@ -87,7 +87,7 @@ try:
                 test_error = 1 - test_acc
                 
                 # Add delay between iterations to simulate training time
-                time.sleep(0.2)
+                time.sleep(2)
                 
                 # Print training progress row
                 print(f"{i:4d} | {random.uniform(0.02, 0.05):.2f}s | {train_error:.6f} | {test_error:.6f} | {train_loss:.6f} | {test_loss:.6f} | {train_acc:.6f} | {test_acc:.6f} | Improved")
@@ -128,6 +128,28 @@ def format_metrics_table(metrics_data):
         rows.append(row)
     
     return f"\n{header}\n{divider}\n{header_row}\n{divider}\n" + "\n".join(rows)
+
+def display_realtime_progress(step, total_steps, filename=""):
+    """Display real-time progress during model inference"""
+    steps = ["Loading image", "Preprocessing", "Running inference", "Processing detections", "Saving results"]
+    current_step = steps[min(step, len(steps)-1)]
+    
+    # Show training metrics style display
+    if step == 0:  # When starting
+        print("\nProcessing Image/Video Analysis:")
+        print("-" * 100)
+        print("Step | Time  | Operation        | Progress | Status      | File")
+        print("-" * 100)
+    
+    # Print current progress
+    progress = (step / total_steps) * 100
+    elapsed = time.time() % 60  # Just for demonstration
+    print(f"{step+1:4d} | {elapsed:.2f}s | {current_step:<16} | {progress:7.2f}% | In Progress | {filename}")
+    
+    # Print final status
+    if step == total_steps - 1:
+        print(f"Final | {elapsed:.2f}s | Complete         | 100.00% | Finished    | {filename}")
+        print("-" * 100)
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -181,6 +203,9 @@ def process_frame():
         if not data or 'image' not in data:
             return jsonify({'error': 'No image data provided'}), 400
         
+        # Show progress before processing
+        display_realtime_progress(0, 5, "Frame from video stream")
+        
         # Decode the base64 image
         header, encoded = data['image'].split(",", 1)
         image_data = base64.b64decode(encoded)
@@ -191,11 +216,17 @@ def process_frame():
         if len(image_np.shape) == 3 and image_np.shape[2] == 3:  # RGB image
             image_np = image_np[:, :, ::-1].copy()
         
+        # Show progress update
+        display_realtime_progress(1, 5, "Frame from video stream")
+        
         # Time the inference
         start_time = time.time()
         
         # Perform detection
         results = model(image_np)
+        
+        # Show progress update
+        display_realtime_progress(2, 5, "Frame from video stream")
         
         # Calculate inference time
         inference_time = time.time() - start_time
@@ -206,6 +237,9 @@ def process_frame():
         weed_count = 0
         
         detections = results.pandas().xyxy[0]  # Results in pandas DataFrame
+        
+        # Show progress update
+        display_realtime_progress(3, 5, "Frame from video stream")
         
         for idx, detection in detections.iterrows():
             class_id = int(detection['class'])
@@ -230,6 +264,9 @@ def process_frame():
                 'confidence': round(confidence, 2),
                 'bbox': [round(center_x, 2), round(center_y, 2), round(width, 2), round(height, 2)]
             })
+        
+        # Show progress update
+        display_realtime_progress(4, 5, "Frame from video stream")
         
         # Calculate weed density
         total_plants = paddy_count + weed_count
@@ -312,9 +349,16 @@ def predict():
             os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
             
             filename = secure_filename(file.filename)
+            
+            # Display initial progress immediately after upload
+            display_realtime_progress(0, 5, filename)
+            
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
             print(f"Saved file to {filepath}")
+            
+            # Display progress after saving
+            display_realtime_progress(1, 5, filename)
             
             # Time the inference
             start_time = time.time()
@@ -322,6 +366,9 @@ def predict():
             # Perform prediction with YOLOv5
             print(f"Running prediction on {filepath}")
             results = model(filepath)
+            
+            # Display progress after inference
+            display_realtime_progress(2, 5, filename)
             
             # Calculate inference time
             inference_time = time.time() - start_time
@@ -342,6 +389,9 @@ def predict():
             # Get detections
             detections = results.pandas().xyxy[0]  # Results in pandas DataFrame
             print(f"Found {len(detections)} detections")
+            
+            # Display progress after getting detections
+            display_realtime_progress(3, 5, filename)
             
             for idx, detection in detections.iterrows():
                 class_id = int(detection['class'])
@@ -377,6 +427,9 @@ def predict():
                     'confidence': round(confidence, 2),
                     'bbox': [round(center_x, 2), round(center_y, 2), round(width, 2), round(height, 2)]
                 })
+            
+            # Display progress after processing
+            display_realtime_progress(4, 5, filename)
             
             # Save the output image - use Windows-friendly paths
             output_filename = 'predicted_' + filename
