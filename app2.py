@@ -90,7 +90,7 @@ try:
                 time.sleep(2)
                 
                 # Print training progress row
-                print(f"{i:4d} | {random.uniform(0.02, 0.05):.2f}s | {train_error:.6f} | {test_error:.6f} | {train_loss:.6f} | {test_loss:.6f} | {train_acc:.6f} | {test_acc:.6f} | Improved")
+                print(f"{i:4d} | {random.uniform(0.5, 1.0):.2f}s | {train_error:.6f} | {test_error:.6f} | {train_loss:.6f} | {test_loss:.6f} | {train_acc:.6f} | {test_acc:.6f} | Improved")
         
         else:
             print("No epoch information found in model. Cannot display training progress.")
@@ -241,6 +241,7 @@ def process_frame():
         
         # Show progress before processing
         display_realtime_progress(0, total_steps, "Frame from video stream")
+        time.sleep(0.5)  # At least 0.5 second delay for each step
         
         # Decode the base64 image
         header, encoded = data['image'].split(",", 1)
@@ -250,7 +251,7 @@ def process_frame():
         
         # Simulate more detailed progress updates (steps 1-10)
         for step in range(1, 11):
-            time.sleep(0.01)  # Small delay to simulate work
+            time.sleep(0.5)  # At least 0.5 second delay for each step
             display_realtime_progress(step, total_steps, "Frame from video stream")
         
         # Convert RGB to BGR for OpenCV
@@ -265,7 +266,7 @@ def process_frame():
         
         # Simulate more detailed progress updates (steps 11-20)
         for step in range(11, 21):
-            time.sleep(0.01)  # Small delay to simulate work
+            time.sleep(0.5)  # At least 0.5 second delay for each step
             display_realtime_progress(step, total_steps, "Frame from video stream")
         
         # Calculate inference time
@@ -306,9 +307,11 @@ def process_frame():
             # Simulate more detailed progress updates (steps 21-29 while processing results)
             if idx < 9 and idx % 1 == 0:  # Only show progress for first few detections
                 step = 21 + idx
+                time.sleep(0.5)  # At least 0.5 second delay for each step
                 display_realtime_progress(step, total_steps, "Frame from video stream")
         
         # Show final progress update
+        time.sleep(0.5)  # At least 0.5 second delay for each step
         display_realtime_progress(29, total_steps, "Frame from video stream")
         
         # Calculate weed density
@@ -398,6 +401,7 @@ def predict():
             
             # Display initial progress immediately after upload
             display_realtime_progress(0, total_steps, filename)
+            time.sleep(0.5)  # At least 0.5 second delay for each step
             
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
@@ -405,7 +409,7 @@ def predict():
             
             # Simulate more detailed file processing steps (1-5)
             for step in range(1, 6):
-                time.sleep(0.02)  # Small delay to simulate work
+                time.sleep(0.5)  # At least 0.5 second delay for each step
                 display_realtime_progress(step, total_steps, filename)
             
             # Time the inference
@@ -417,7 +421,7 @@ def predict():
             
             # Simulate more detailed model processing steps (6-15)
             for step in range(6, 16):
-                time.sleep(0.02)  # Small delay to simulate work
+                time.sleep(0.5)  # At least 0.5 second delay for each step
                 display_realtime_progress(step, total_steps, filename)
             
             # Calculate inference time
@@ -438,7 +442,7 @@ def predict():
             
             # Display more progress steps (16-20)
             for step in range(16, 21):
-                time.sleep(0.01)  # Small delay
+                time.sleep(0.5)  # At least 0.5 second delay for each step
                 display_realtime_progress(step, total_steps, filename)
             
             # Get detections
@@ -485,9 +489,11 @@ def predict():
                 # Update progress for each detection (up to 8 detections)
                 if idx < detection_step_interval:
                     step = 21 + idx
+                    time.sleep(0.5)  # At least 0.5 second delay for each step
                     display_realtime_progress(step, total_steps, filename)
             
             # Final steps (29-30)
+            time.sleep(0.5)  # At least 0.5 second delay for each step
             display_realtime_progress(29, total_steps, filename)
             
             # Save the output image - use Windows-friendly paths
@@ -499,6 +505,8 @@ def predict():
             else:
                 print(f"Saved predicted image to {output_path}")
             
+            # Display final step
+            time.sleep(0.5)  # At least 0.5 second delay for the final step
             display_realtime_progress(total_steps-1, total_steps, filename)
             
             # Calculate weed density if any plants are detected
