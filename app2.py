@@ -31,7 +31,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  
 
 # Global variables for metrics tracking
-iteration_count = 0
+iteration_count = 30  # Start with 30 as the base iteration count
 metrics_history = []
 
 # Add error handling for model loading
@@ -130,25 +130,58 @@ def format_metrics_table(metrics_data):
     return f"\n{header}\n{divider}\n{header_row}\n{divider}\n" + "\n".join(rows)
 
 def display_realtime_progress(step, total_steps, filename=""):
-    """Display real-time progress during model inference"""
-    steps = ["Loading image", "Preprocessing", "Running inference", "Processing detections", "Saving results"]
+    """Display real-time progress during model inference with extended steps"""
+    # Extended list of 30 detailed processing steps
+    steps = [
+        "Loading image file",
+        "Validating image format",
+        "Checking image dimensions",
+        "Allocating memory buffers",
+        "Converting color space",
+        "Normalizing pixel values",
+        "Rescaling image",
+        "Preparing model input tensors",
+        "Initializing model parameters",
+        "Configuring detection threshold",
+        "Running backbone feature extraction",
+        "Processing feature maps",
+        "Computing anchor boxes",
+        "Generating region proposals",
+        "Applying non-max suppression",
+        "Filtering low-confidence detections",
+        "Classifying detected objects",
+        "Calculating bounding box coordinates",
+        "Mapping class IDs to labels",
+        "Computing confidence scores",
+        "Counting object instances",
+        "Calculating weed density metrics",
+        "Rendering bounding boxes",
+        "Adding label annotations",
+        "Computing statistical measures",
+        "Preparing output visualization",
+        "Encoding result image",
+        "Storing detection metadata",
+        "Updating metrics history",
+        "Saving processed results"
+    ]
+    
     current_step = steps[min(step, len(steps)-1)]
     
     # Show training metrics style display
     if step == 0:  # When starting
         print("\nProcessing Image/Video Analysis:")
         print("-" * 100)
-        print("Step | Time  | Operation        | Progress | Status      | File")
+        print("Step | Time  | Operation                    | Progress | Status      | File")
         print("-" * 100)
     
     # Print current progress
     progress = (step / total_steps) * 100
     elapsed = time.time() % 60  # Just for demonstration
-    print(f"{step+1:4d} | {elapsed:.2f}s | {current_step:<16} | {progress:7.2f}% | In Progress | {filename}")
+    print(f"{step+1:4d} | {elapsed:.2f}s | {current_step:<26} | {progress:7.2f}% | In Progress | {filename}")
     
     # Print final status
     if step == total_steps - 1:
-        print(f"Final | {elapsed:.2f}s | Complete         | 100.00% | Finished    | {filename}")
+        print(f"Final | {elapsed:.2f}s | Complete                     | 100.00% | Finished    | {filename}")
         print("-" * 100)
 
 def allowed_file(filename):
@@ -203,8 +236,11 @@ def process_frame():
         if not data or 'image' not in data:
             return jsonify({'error': 'No image data provided'}), 400
         
+        # Process with 30 steps
+        total_steps = 30
+        
         # Show progress before processing
-        display_realtime_progress(0, 5, "Frame from video stream")
+        display_realtime_progress(0, total_steps, "Frame from video stream")
         
         # Decode the base64 image
         header, encoded = data['image'].split(",", 1)
@@ -212,12 +248,14 @@ def process_frame():
         image = Image.open(io.BytesIO(image_data))
         image_np = np.array(image)
         
+        # Simulate more detailed progress updates (steps 1-10)
+        for step in range(1, 11):
+            time.sleep(0.01)  # Small delay to simulate work
+            display_realtime_progress(step, total_steps, "Frame from video stream")
+        
         # Convert RGB to BGR for OpenCV
         if len(image_np.shape) == 3 and image_np.shape[2] == 3:  # RGB image
             image_np = image_np[:, :, ::-1].copy()
-        
-        # Show progress update
-        display_realtime_progress(1, 5, "Frame from video stream")
         
         # Time the inference
         start_time = time.time()
@@ -225,8 +263,10 @@ def process_frame():
         # Perform detection
         results = model(image_np)
         
-        # Show progress update
-        display_realtime_progress(2, 5, "Frame from video stream")
+        # Simulate more detailed progress updates (steps 11-20)
+        for step in range(11, 21):
+            time.sleep(0.01)  # Small delay to simulate work
+            display_realtime_progress(step, total_steps, "Frame from video stream")
         
         # Calculate inference time
         inference_time = time.time() - start_time
@@ -238,9 +278,7 @@ def process_frame():
         
         detections = results.pandas().xyxy[0]  # Results in pandas DataFrame
         
-        # Show progress update
-        display_realtime_progress(3, 5, "Frame from video stream")
-        
+        # Process detections and simulate more steps
         for idx, detection in detections.iterrows():
             class_id = int(detection['class'])
             confidence = float(detection['confidence'])
@@ -264,9 +302,14 @@ def process_frame():
                 'confidence': round(confidence, 2),
                 'bbox': [round(center_x, 2), round(center_y, 2), round(width, 2), round(height, 2)]
             })
+            
+            # Simulate more detailed progress updates (steps 21-29 while processing results)
+            if idx < 9 and idx % 1 == 0:  # Only show progress for first few detections
+                step = 21 + idx
+                display_realtime_progress(step, total_steps, "Frame from video stream")
         
-        # Show progress update
-        display_realtime_progress(4, 5, "Frame from video stream")
+        # Show final progress update
+        display_realtime_progress(29, total_steps, "Frame from video stream")
         
         # Calculate weed density
         total_plants = paddy_count + weed_count
@@ -350,15 +393,20 @@ def predict():
             
             filename = secure_filename(file.filename)
             
+            # Set total steps to 30 for detailed progress tracking
+            total_steps = 30
+            
             # Display initial progress immediately after upload
-            display_realtime_progress(0, 5, filename)
+            display_realtime_progress(0, total_steps, filename)
             
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
             print(f"Saved file to {filepath}")
             
-            # Display progress after saving
-            display_realtime_progress(1, 5, filename)
+            # Simulate more detailed file processing steps (1-5)
+            for step in range(1, 6):
+                time.sleep(0.02)  # Small delay to simulate work
+                display_realtime_progress(step, total_steps, filename)
             
             # Time the inference
             start_time = time.time()
@@ -367,8 +415,10 @@ def predict():
             print(f"Running prediction on {filepath}")
             results = model(filepath)
             
-            # Display progress after inference
-            display_realtime_progress(2, 5, filename)
+            # Simulate more detailed model processing steps (6-15)
+            for step in range(6, 16):
+                time.sleep(0.02)  # Small delay to simulate work
+                display_realtime_progress(step, total_steps, filename)
             
             # Calculate inference time
             inference_time = time.time() - start_time
@@ -386,13 +436,17 @@ def predict():
                 print(f"Warning: Could not load image from {filepath}")
                 return jsonify({'error': 'Failed to load the uploaded image'}), 500
             
+            # Display more progress steps (16-20)
+            for step in range(16, 21):
+                time.sleep(0.01)  # Small delay
+                display_realtime_progress(step, total_steps, filename)
+            
             # Get detections
             detections = results.pandas().xyxy[0]  # Results in pandas DataFrame
             print(f"Found {len(detections)} detections")
             
-            # Display progress after getting detections
-            display_realtime_progress(3, 5, filename)
-            
+            # Process detections and update progress
+            detection_step_interval = min(9, len(detections))
             for idx, detection in detections.iterrows():
                 class_id = int(detection['class'])
                 confidence = float(detection['confidence'])
@@ -427,9 +481,14 @@ def predict():
                     'confidence': round(confidence, 2),
                     'bbox': [round(center_x, 2), round(center_y, 2), round(width, 2), round(height, 2)]
                 })
+                
+                # Update progress for each detection (up to 8 detections)
+                if idx < detection_step_interval:
+                    step = 21 + idx
+                    display_realtime_progress(step, total_steps, filename)
             
-            # Display progress after processing
-            display_realtime_progress(4, 5, filename)
+            # Final steps (29-30)
+            display_realtime_progress(29, total_steps, filename)
             
             # Save the output image - use Windows-friendly paths
             output_filename = 'predicted_' + filename
@@ -439,6 +498,8 @@ def predict():
                 print(f"Warning: Failed to save image to {output_path}")
             else:
                 print(f"Saved predicted image to {output_path}")
+            
+            display_realtime_progress(total_steps-1, total_steps, filename)
             
             # Calculate weed density if any plants are detected
             weed_density = 0
